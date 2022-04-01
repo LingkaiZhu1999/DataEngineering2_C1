@@ -7,16 +7,16 @@ client = pulsar.Client('pulsar://localhost:6650')
 consumer = client.subscribe('topic-output', subscription_name='DE-sub')
 State = True
 sentence = ''
-i = 12
 while State:
     msg = consumer.receive()
     try:
         word = msg.data().decode('utf-8')
-        sentence += word + ' '
-        consumer.acknowledge(msg)
-        i -= 1
-        if i == 0:
+        if word == "END SESSION!":
             State = False
+            consumer.acknowledge(msg)
+        else:
+            sentence += word + ' '  # data merging
+            consumer.acknowledge(msg)
     except:
         consumer.negative_acknowledge(msg)
 print(sentence)
